@@ -1,0 +1,6 @@
+{
+  "budget": 1000,
+  "tickers": ["AAPL", "MSFT", "NVDA", "AMZN", "META", "JPM", "XOM", "JNJ", "WMT", "KO"],
+  "risk_aversion": 0.8,
+  "max_weight_per_stock": 0.35
+}
