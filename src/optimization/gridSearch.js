@@ -1,40 +1,85 @@
-﻿import { portfolioObjective } from "./objective"
+﻿import {
+  portfolioObjective,
+  portfolioReturn,
+  portfolioRisk,
+} from "./objective";
 
-export function runGridSearch(mu, sigma, lambda, step = 0.1, maxWeight = 1) {
-  const n = mu.length
-  if (n > 4) {
-    throw new Error("Grid search is only intended for very small problems (n <= 4).")
+function roundToStep(value, digits = 10) {
+  return Number(value.toFixed(digits));
+}
+
+export function runGridSearch(mu, sigma, lambda = 1, step = 0.1, maxWeight = 1) {
+  const n = mu.length;
+
+  if (n === 0) {
+    return {
+      weights: [],
+      objective: 0,
+      expectedReturn: 0,
+      risk: 0,
+      candidatesChecked: 0,
+    };
   }
 
-  let bestWeights = null
-  let bestObjective = Infinity
+  if (n > 4) {
+    throw new Error("Grid search is only intended for very small problems (n <= 4).");
+  }
 
-  function generate(current, remaining, depth) {
+  let bestWeights = null;
+  let bestObjective = Infinity;
+  let candidatesChecked = 0;
+
+  function search(currentWeights, remaining, depth) {
     if (depth === n - 1) {
-      const last = remaining
-      const candidate = [...current, last]
+      const lastWeight = roundToStep(remaining);
+      const candidate = [...currentWeights, lastWeight];
 
-      if (candidate.every((w) => w >= 0 && w <= maxWeight + 1e-8)) {
-        const obj = portfolioObjective(candidate, mu, sigma, lambda)
-        if (obj < bestObjective) {
-          bestObjective = obj
-          bestWeights = candidate
+      const valid = candidate.every(
+        (weight) => weight >= -1e-8 && weight <= maxWeight + 1e-8
+      );
+
+      if (valid) {
+        candidatesChecked += 1;
+        const objective = portfolioObjective(candidate, mu, sigma, lambda);
+
+        if (objective < bestObjective) {
+          bestObjective = objective;
+          bestWeights = candidate;
         }
       }
-      return
+      return;
     }
 
-    for (let w = 0; w <= remaining + 1e-8; w += step) {
-      if (w <= maxWeight + 1e-8) {
-        generate([...current, Number(w.toFixed(10))], Number((remaining - w).toFixed(10)), depth + 1)
+    for (let weight = 0; weight <= remaining + 1e-8; weight += step) {
+      const roundedWeight = roundToStep(weight);
+
+      if (roundedWeight <= maxWeight + 1e-8) {
+        search(
+          [...currentWeights, roundedWeight],
+          roundToStep(remaining - roundedWeight),
+          depth + 1
+        );
       }
     }
   }
 
-  generate([], 1, 0)
+  search([], 1, 0);
+
+  if (!bestWeights) {
+    return {
+      weights: new Array(n).fill(0),
+      objective: Infinity,
+      expectedReturn: 0,
+      risk: 0,
+      candidatesChecked,
+    };
+  }
 
   return {
     weights: bestWeights,
-    objective: bestObjective
-  }
+    objective: bestObjective,
+    expectedReturn: portfolioReturn(bestWeights, mu),
+    risk: portfolioRisk(bestWeights, sigma),
+    candidatesChecked,
+  };
 }
