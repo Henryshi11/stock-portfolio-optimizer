@@ -1,139 +1,116 @@
-# Stock Portfolio Optimizer
+# Stock Portfolio Optimizer (PGD)
 
-A visual and interactive tool for exploring portfolio optimization strategies using real-world stock data.
-
-This project is developed as part of a Facility Location / Optimization-related course, focusing on applying mathematical modeling and optimization techniques to financial data.
+A visual and interactive project for constrained portfolio optimization.
 
 ---
 
 ## Overview
 
-This project builds a simplified portfolio optimization system that:
+This project studies how to allocate capital across a fixed set of stocks while balancing **expected return** and **risk**.
 
-* Uses historical stock data (CSV-based)
-* Computes multiple financial features (returns, risk, momentum, etc.)
-* Combines different factors into a unified scoring model
-* Solves an optimization problem to determine asset allocation
-* Visualizes the final portfolio in an interactive web interface
+The main algorithm is **Projected Gradient Descent (PGD)**.
+We also include:
 
-The goal is not to build a production-level trading system, but to provide a **clear and visual understanding of optimization concepts applied to finance**.
+* Greedy baseline
+* Grid Search (for small-scale validation)
+
+This is a **learning-focused optimization project**, not a real trading system.
+
+---
+
+## Optimization Model
+
+Let $w \in \mathbb{R}^n$ be the portfolio weights.
+
+We solve:
+
+$$
+\min f(w) = \frac{\lambda}{2} w^T \Sigma w - \mu^T w
+$$
+
+subject to:
+
+$$
+\sum_{i=1}^n w_i = 1
+$$
+
+$$
+0 \leq w_i \leq u_i
+$$
+
+where:
+
+* $w_i$ = weight of stock $i$
+* $\mu$ = expected return vector
+* $\Sigma$ = covariance matrix
+* $\lambda$ = risk aversion parameter
+* $u_i$ = max allocation per stock
+
+---
+
+## Algorithm (PGD)
+
+At each iteration:
+
+1. Gradient step
+   $$
+   z^{k+1} = w^k - \alpha \nabla f(w^k)
+   $$
+
+2. Projection step
+   $$
+   w^{k+1} = \Pi_{\mathcal{C}}(z^{k+1})
+   $$
+
+Gradient:
+
+$$
+\nabla f(w) = \lambda \Sigma w - \mu
+$$
 
 ---
 
 ## Features
 
-* Multi-factor stock scoring:
-
-  * Returns / Momentum
-  * Risk (Volatility / Covariance)
-  * Fundamentals (mock or simplified)
-  * Valuation metrics
-  * News sentiment (mock)
-
-* Portfolio optimization model:
-
-  Minimize risk while maximizing score:
-
-  $$ \min_w \ \lambda w^T \Sigma w - s^T w $$
-
-  Subject to:
-
-  * $\sum w_i = 1$
-  * $0 \le w_i \le u_i$
-
-* Interactive visualization:
-
-  * Allocation breakdown
-  * Investment amount per stock
-  * Portfolio comparison (planned)
-
----
-
-## Tech Stack
-
-* React (Vite)
-* JavaScript
-* HTML / CSS
-* Canvas-based visualization
-
-No backend is used — all computation is done on the client side using preloaded CSV data.
+* Interactive portfolio visualization
+* Step-by-step PGD process
+* Real stock CSV dataset
+* Adjustable parameters ($\lambda$, constraints, budget)
+* Algorithm comparison (PGD vs Greedy vs Grid Search)
 
 ---
 
 ## Project Structure
 
-```
+```text
 src/
-  components/        # UI components
-  config/            # model weights, scenarios, themes
-  data/              # CSV data + loaders
-  features/          # feature engineering
-  optimization/      # optimization logic
-  render/            # canvas visualization
-  styles/            # global styles
-  utils/             # helper functions
+  components/      # UI components
+  config/          # parameters
+  data/            # datasets
+  features/        # preprocessing
+  optimization/    # algorithms
+  render/          # visualization
+  styles/          # CSS
+  utils/           # helpers
+```
+
+Core algorithms:
+
+```text
+src/optimization/
+  pgd.js
+  projection.js
+  greedy.js
+  gridSearch.js
+  objective.js
+  constraints.js
 ```
 
 ---
 
-## Data
+## Run
 
-This project uses a fixed dataset of ~10 stocks across different sectors, including:
-
-* Tech (AAPL, MSFT, NVDA)
-* Finance (JPM)
-* Energy (XOM)
-* Healthcare (JNJ)
-* Consumer (WMT, KO)
-* etc.
-
-All data is stored locally in CSV format.
-
----
-
-## Getting Started
-
-### Install dependencies
-
-```
+```bash
 npm install
-```
-
-### Run development server
-
-```
 npm run dev
 ```
-
-Then open:
-
-```
-http://localhost:5173
-```
-
----
-
-## Current Status
-
-This project is under active development.
-
-Planned steps:
-
-* [ ] Complete data pipeline (CSV → features)
-* [ ] Implement scoring system
-* [ ] Implement optimization solver
-* [ ] Build UI control panel
-* [ ] Add visualization (canvas)
-* [ ] Compare with baseline strategies
-
----
-
-## Notes
-
-This is a learning-oriented project designed to:
-
-* Reinforce optimization concepts
-* Explore multi-factor decision making
-* Build intuition through visualization
-
-It is **not intended for real financial advice or trading use**.
