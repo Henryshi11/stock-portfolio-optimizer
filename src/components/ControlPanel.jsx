@@ -9,8 +9,6 @@ export default function ControlPanel({
   setStepSize,
   maxIterations,
   setMaxIterations,
-  algorithm,
-  setAlgorithm,
   featureMode,
   setFeatureMode,
 }) {
@@ -72,15 +70,6 @@ export default function ControlPanel({
           value={maxIterations}
           onChange={(e) => setMaxIterations(Number(e.target.value))}
         />
-      </label>
-
-      <label className="control-group">
-        <span>Algorithm</span>
-        <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)}>
-          <option value="pgd">Projected Gradient Descent</option>
-          <option value="greedy">Greedy</option>
-          <option value="grid">Grid Search</option>
-        </select>
       </label>
 
       <label className="control-group">

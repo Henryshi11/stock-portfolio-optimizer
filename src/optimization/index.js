@@ -1,6 +1,4 @@
 ﻿export { runPGD, runPGDStep } from "./pgd";
-export { runGreedy } from "./greedy";
-export { runGridSearch } from "./gridSearch";
 export { projectToCappedSimplex, projectToSimplex } from "./projection";
 export {
   portfolioObjective,

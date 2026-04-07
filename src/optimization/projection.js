@@ -1,12 +1,19 @@
 ﻿function cappedSimplexSum(z, tau, maxWeight) {
   let sum = 0;
+
   for (let i = 0; i < z.length; i++) {
     sum += Math.min(maxWeight, Math.max(0, z[i] - tau));
   }
+
   return sum;
 }
 
-export function projectToCappedSimplex(z, maxWeight = 1, tolerance = 1e-8, maxIterations = 100) {
+export function projectToCappedSimplex(
+  z,
+  maxWeight = 1,
+  tolerance = 1e-8,
+  maxIterations = 100
+) {
   if (!Array.isArray(z) || z.length === 0) {
     return [];
   }

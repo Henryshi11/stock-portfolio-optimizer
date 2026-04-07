@@ -19,9 +19,9 @@ export default function SummaryCards({
   return (
     <div className="summary-grid">
       <Card label="Method" value={method} />
-      <Card label="Objective" value={formatNumber(objective, 6)} />
+      <Card label="Objective Value" value={formatNumber(objective, 6)} />
       <Card label="Expected Return" value={formatNumber(expectedReturn, 6)} />
-      <Card label="Risk" value={formatNumber(risk, 6)} />
+      <Card label="Portfolio Risk" value={formatNumber(risk, 6)} />
       <Card label="Iterations" value={String(iterations)} />
     </div>
   );

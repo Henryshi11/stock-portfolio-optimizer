@@ -9,7 +9,6 @@ import { isFeasible, createEqualWeights } from "./constraints";
 
 export function runPGDStep(weights, mu, sigma, lambda, stepSize, maxWeight) {
   const gradient = portfolioGradient(weights, mu, sigma, lambda);
-
   const rawStep = weights.map((weight, index) => weight - stepSize * gradient[index]);
   const nextWeights = projectToCappedSimplex(rawStep, maxWeight);
 
@@ -36,13 +35,13 @@ export function runPGD({
   tolerance = 1e-8,
 }) {
   const n = mu.length;
+
   let weights =
     Array.isArray(initialWeights) && initialWeights.length === n
       ? [...initialWeights]
       : createEqualWeights(n);
 
   const history = [];
-
   let previousObjective = portfolioObjective(weights, mu, sigma, lambda);
 
   for (let iter = 0; iter < maxIterations; iter++) {
